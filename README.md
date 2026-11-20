@@ -1,0 +1,42 @@
+# qa-perf-practice
+
+Practice repo for API, browser-performance and load testing, wired into CI.
+
+| Area | Tool | Where | Runs in CI |
+|---|---|---|---|
+| API functional + latency | pytest, requests, jsonschema | `tests/api/` | every push |
+| Browser performance budgets | Playwright (Python) | `tests/browser/` | every push |
+| Load test with pass/fail thresholds | k6 | `load/` | manual (`workflow_dispatch`) |
+| Bottleneck hunt | Flask app + k6 | `app/` | local |
+
+## Setup
+
+```bash
+python3 -m venv .venv && source .venv/bin/activate
+pip install -r requirements.txt
+python -m playwright install chromium
+brew install k6
+```
+
+## Run
+
+```bash
+pytest -m api                 # API tests
+pytest -m browser -s          # page-load budgets (-s prints the timings)
+k6 run load/smoke.js          # load test against QuickPizza
+
+python app/app.py             # in one terminal
+k6 run -e BASE_URL=http://localhost:5000 load/smoke.js   # in another
+```
+
+## Design choices
+- **Budgets and thresholds fail the build.** Performance is a gate, not a report.
+- **Config in one place.** Base URLs and budgets come from env vars with defaults.
+- **Schemas separate from tests.** Tests stay short and schemas are reusable.
+- **Load tests run manually in CI.** Shared demo sites shouldn't take load on every push.
+
+## Results log
+Record baselines and before/after numbers here as you go.
+
+| Date | Test | p95 / timing | Notes |
+|---|---|---|---|
