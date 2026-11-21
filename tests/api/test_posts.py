@@ -37,15 +37,15 @@ def test_get_post_by_one_user(api, latency_budget):
     assert_within_budget(r, latency_budget)
 
 
-@pytest.mark.xfail(reason="API has no post limit yet (see ticket ABC-123)")
-def test_cannot_exceed_post_limit(api):
-    r = api.post_path("/posts", json={"title": "x", "body": "x", "userId": 1})
-    assert r.status_code == 403, f"Expected status code 403, got {r.status_code}"
-    assert_within_budget(r, latency_budget)
-
-
 @pytest.mark.parametrize ("bad_id", ["-1", "0", "1234567890"])
 def test_missing_post_returns_404(api, bad_id, latency_budget):
     r = api.get_path(f"/posts/{bad_id}")
     assert r.status_code == 404, f"Expected status code 404, got {r.status_code}"
+    assert_within_budget(r, latency_budget)
+
+
+@pytest.mark.xfail(reason="API has no post limit yet (see ticket ABC-123)")
+def test_cannot_exceed_post_limit(api):
+    r = api.post_path("/posts", json={"title": "x", "body": "x", "userId": 1})
+    assert r.status_code == 403, f"Expected status code 403, got {r.status_code}"
     assert_within_budget(r, latency_budget)
