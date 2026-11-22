@@ -38,7 +38,11 @@ k6 run -e BASE_URL=http://localhost:5000 load/smoke.js   # in another
 ## Results log
 Record baselines and before/after numbers here as you go.
 
-|    Date    |   Test    |	p95 / timing	    |           Notes
-| 2026-11-22 | smoke.js (QuickPizza, 5 VUs) | home 115ms, quotes 121ms p95 | 0% errors. Thresholds set to 350ms (~3x baseline) |
-| 2026-11-22 | stress.js (local, 10→80 VUs) | /fast 2.2ms, /slow 150ms p95 | No break at 80 VUs. /slow is per-request cost, not capacity |
-| 2026-11-22 | stress.js (local, 10→320 VUs) | /fast 2.1ms, /slow 147ms p95 | No breaking point up to 320 VUs on local hardware.    
+| Date | Test | p95 / timing | Notes |
+|---|---|---|---|
+| 2026-11-22 | smoke.js (QuickPizza, 5 VUs) | home 115ms, quotes 121ms | 0% errors. Thresholds set to 350ms (~3x baseline) |
+| 2026-11-22 | stress.js (local, 10→80 VUs), baseline | /fast 2.2ms, /slow 150ms | No break at 80 VUs. /slow is per-request cost, not capacity |
+| 2026-11-22 | stress.js (local, 10→320 VUs), baseline | /fast 2.1ms, /slow 147ms | No breaking point up to 320 VUs on local hardware |
+| 2026-11-22 | stress.js (local, 10→80 VUs), fix 1: dict lookup | /fast 1.8ms, /slow 132ms | −12%. Removed the list scan; 200 round trips were still the main cost |
+| 2026-11-22 | stress.js (local, 10→80 VUs), fix 2: batched lookup | /fast 3.3ms, /slow 3.7ms | −98% vs baseline (~40x). One lookup instead of 200 (N+1 fix). Output unchanged (count 200), 0% errors |
+
