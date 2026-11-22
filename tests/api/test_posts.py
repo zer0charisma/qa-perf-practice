@@ -46,8 +46,11 @@ def test_missing_post_returns_404(api, bad_id, latency_budget):
     assert_within_budget(r, latency_budget)
 
 
-pytest.mark.xfail(raises=AssertionError, strict=True, reason="API has no post limit yet")
-def test_cannot_exceed_post_limit(api, latency_budget):
-    r = api.post_path("/posts", json={"title": "x", "body": "x", "userId": 1})
-    assert r.status_code == 201, f"Expected status code 201, got {r.status_code}"
+def test_list_posts_under_latency_budget(api, latency_budget):
+    r = api.get_path("/posts")
+    assert r.status_code == 200, f"Expected status code 200, got {r.status_code}"
+    posts = r.json()
+    assert len(posts) == 100, f"Expected 100 posts, got {len(posts)}"
+    assert_within_budget(r, latency_budget)
+
 
