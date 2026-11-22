@@ -16,12 +16,12 @@ export const options = {
   // Thresholds are the point: if they fail, k6 exits non-zero and CI goes red.
   thresholds: {
     // global: all requests
-    http_req_duration: ['p(95)<800'],
+    http_req_duration: ['p(95)<350'],
     http_req_failed: ['rate<0.01'],
   
-    // per endpoint
-    'http_req_duration{name:home}': ['p(95)<900'],
-    'http_req_duration{name:quotes}': ['p(95)<900'],
+    // per endpoint: ~2.5-3x baseline (home 115ms, quotes 121ms p95 on 2026-11-22)
+    'http_req_duration{name:home}': ['p(95)<350'],
+    'http_req_duration{name:quotes}': ['p(95)<350'],
   },  
 };
 

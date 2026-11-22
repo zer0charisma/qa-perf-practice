@@ -13,15 +13,18 @@ from flask import Flask, jsonify
 app = Flask(__name__)
 
 PRODUCTS = [{"id": i, "name": f"item-{i}"} for i in range(2000)]
+PRODUCTS_BY_ID = {p["id"]: p for p in PRODUCTS}
 
 
 def lookup_product(product_id):
     # Simulates a slow per-item lookup (think: one DB query per row).
     time.sleep(0.0005)
-    for p in PRODUCTS:
-        if p["id"] == product_id:
-            return p
-    return None
+    return PRODUCTS_BY_ID.get(product_id)
+
+def lookup_products(product_ids):
+    # One batched lookup (think: one DB query for all rows).
+    time.sleep(0.0005)
+    return [PRODUCTS_BY_ID.get(pid) for pid in product_ids]
 
 
 @app.route("/")
@@ -36,10 +39,11 @@ def fast():
 
 @app.route("/slow")
 def slow():
-    # TODO (you): this is the bottleneck. Why is it slow, and how would you fix it?
     ids = range(0, 2000, 10)
-    items = [lookup_product(i) for i in ids]
+    items = lookup_products(ids)
     return jsonify(count=len(items))
+
+
 
 
 if __name__ == "__main__":
