@@ -38,5 +38,7 @@ k6 run -e BASE_URL=http://localhost:5000 load/smoke.js   # in another
 ## Results log
 Record baselines and before/after numbers here as you go.
 
-| Date | Test | p95 / timing | Notes |
-|---|---|---|---|
+|    Date    |   Test    |	p95 / timing	    |           Notes
+| 2026-11-22 | smoke.js (QuickPizza, 5 VUs) | home 115ms, quotes 121ms p95 | 0% errors. Thresholds set to 350ms (~3x baseline) |
+| 2026-11-22 | stress.js (local, 10→80 VUs) | /fast 2.2ms, /slow 150ms p95 | No break at 80 VUs. /slow is per-request cost, not capacity |
+| 2026-11-22 | stress.js (local, 10→320 VUs) | /fast 2.1ms, /slow 147ms p95 | No breaking point up to 320 VUs on local hardware.    

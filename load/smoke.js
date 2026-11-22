@@ -15,17 +15,20 @@ export const options = {
   ],
   // Thresholds are the point: if they fail, k6 exits non-zero and CI goes red.
   thresholds: {
+    // global: all requests
     http_req_duration: ['p(95)<800'],
     http_req_failed: ['rate<0.01'],
-  },
+  
+    // per endpoint
+    'http_req_duration{name:home}': ['p(95)<900'],
+    'http_req_duration{name:quotes}': ['p(95)<900'],
+  },  
 };
 
 export default function () {
-  const res = http.get(`${BASE_URL}/`);
-  check(res, { 'status is 200': (r) => r.status === 200 });
+  const home = http.get(`${BASE_URL}/`, { tags: {name: 'home'} });
+  check(home, { 'home status is 200': (r) => r.status === 200 });
+  const quotes = http.get(`${BASE_URL}/api/quotes`, { tags: {name: 'quotes'} });
+  check(quotes, { 'quotes status is 200': (r) => r.status === 200 });
   sleep(1);
 }
-
-// TODO (you):
-// - add a second request to an API endpoint and tag it so you get per-endpoint stats
-// - make a stress.js that keeps ramping until p95 breaks; note where it breaks
