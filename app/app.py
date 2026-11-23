@@ -15,22 +15,29 @@ app = Flask(__name__)
 PRODUCTS = [{"id": i, "name": f"item-{i}"} for i in range(2000)]
 PRODUCTS_BY_ID = {p["id"]: p for p in PRODUCTS}
 
-
-def lookup_product(product_id):
-    # Simulates a slow per-item lookup (think: one DB query per row).
-    time.sleep(0.0005)
-    return PRODUCTS_BY_ID.get(product_id)
+# original, slow test; keep for ref and future testing 
+# def lookup_product(product_id):
+#     # Simulates a slow per-item lookup (think: one DB query per row).
+#     time.sleep(0.0005)
+#     return PRODUCTS_BY_ID.get(product_id)
 
 def lookup_products(product_ids):
     # One batched lookup (think: one DB query for all rows).
     time.sleep(0.0005)
-    return [PRODUCTS_BY_ID.get(pid) for pid in product_ids]
+    return [PRODUCTS_BY_ID.get(product_id) for product_id in product_ids]
 
+#long form of the above test
+# def lookup_products(product_ids):
+#     # One batched lookup (think: one DB query for all rows).
+#     time.sleep(0.0005)
+#     products = []
+#     for product_id in product_ids:
+#         products.append(PRODUCTS_BY_ID.get(product_id))
+#     return products
 
 @app.route("/")
 def index():
     return jsonify(status="ok")
-
 
 @app.route("/fast")
 def fast():
