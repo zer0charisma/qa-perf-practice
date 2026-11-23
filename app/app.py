@@ -13,6 +13,7 @@ from flask import Flask, jsonify
 app = Flask(__name__)
 
 PRODUCTS = [{"id": i, "name": f"item-{i}"} for i in range(2000)]
+# Index by id so lookups don't scan the whole list.
 PRODUCTS_BY_ID = {p["id"]: p for p in PRODUCTS}
 
 # original, slow test; keep for ref and future testing 
